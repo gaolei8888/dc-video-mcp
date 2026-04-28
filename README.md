@@ -13,7 +13,7 @@ A local MCP server that turns video files into searchable, summarizable, blog-re
 - **Fully local.** Moondream2 for frame captioning, faster-whisper for ASR, CLIP for embeddings, sqlite-vec for vector storage. No external API keys.
 - **Apple Silicon friendly.** Runs natively on macOS (MPS), Linux (CUDA/CPU), and Windows. No Docker required.
 - **One-shot blog generation.** Index a video and generate a polished blog post with embedded screenshots in a single command.
-- **Semantic search.** Query across every video you have ever indexed -- by caption content or transcript text.
+- **RAG-powered search.** Vector embeddings (CLIP) + sqlite-vec enable semantic retrieval across every indexed video. The MCP client (e.g. Claude) closes the RAG loop by generating answers from retrieved context.
 
 ---
 
