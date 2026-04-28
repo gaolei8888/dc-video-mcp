@@ -1,6 +1,8 @@
 """Env-var resolution for Config.from_env. No model loads."""
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from dc_video_mcp.config import Config
@@ -81,3 +83,86 @@ def test_supported_languages_shape() -> None:
     for entry in langs:
         assert set(entry) == {"code", "name"}
         assert entry["code"] and entry["name"]
+
+
+# ---------------------------------------------------------------------------
+# _default_cache_dir: OS-specific defaults
+# ---------------------------------------------------------------------------
+
+
+def test_default_cache_dir_darwin(monkeypatch: pytest.MonkeyPatch) -> None:
+    from dc_video_mcp.config import _default_cache_dir
+
+    monkeypatch.setattr("dc_video_mcp.config.platform.system", lambda: "Darwin")
+    result = _default_cache_dir()
+    assert result == Path.home() / "Documents" / "dc-video-mcp"
+
+
+def test_default_cache_dir_windows(monkeypatch: pytest.MonkeyPatch) -> None:
+    from dc_video_mcp.config import _default_cache_dir
+
+    monkeypatch.setattr("dc_video_mcp.config.platform.system", lambda: "Windows")
+    result = _default_cache_dir()
+    assert result == Path.home() / "Documents" / "dc-video-mcp"
+
+
+def test_default_cache_dir_linux(monkeypatch: pytest.MonkeyPatch) -> None:
+    from dc_video_mcp.config import _default_cache_dir
+
+    monkeypatch.setattr("dc_video_mcp.config.platform.system", lambda: "Linux")
+    result = _default_cache_dir()
+    assert result == Path.home() / "dc-video-mcp"
+
+
+# ---------------------------------------------------------------------------
+# reconfigure(): rebuild CONFIG with overrides
+# ---------------------------------------------------------------------------
+
+
+def test_reconfigure_updates_cache_dir(tmp_path: Path) -> None:
+    from dc_video_mcp.config import reconfigure
+
+    new_cache = tmp_path / "test-cache"
+    cfg = reconfigure(cache_dir=str(new_cache))
+    assert cfg.cache_dir == new_cache
+
+
+def test_reconfigure_derives_db_and_frames(tmp_path: Path) -> None:
+    from dc_video_mcp.config import reconfigure
+
+    new_cache = tmp_path / "test-cache-derived"
+    cfg = reconfigure(cache_dir=str(new_cache))
+    assert cfg.db_path == new_cache / "index.db"
+    assert cfg.frames_dir == new_cache / "frames"
+
+
+def test_reconfigure_propagates_to_module_config(tmp_path: Path) -> None:
+    import dc_video_mcp.config as config_mod
+    from dc_video_mcp.config import reconfigure
+
+    new_cache = tmp_path / "test-cache-module"
+    reconfigure(cache_dir=str(new_cache))
+    assert config_mod.CONFIG.cache_dir == new_cache
+
+
+# ---------------------------------------------------------------------------
+# --cache-dir CLI argument
+# ---------------------------------------------------------------------------
+
+
+def test_cli_accepts_cache_dir_argument() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="dc-video-mcp")
+    parser.add_argument("--cache-dir", help="Override cache directory")
+    args = parser.parse_args(["--cache-dir", "/tmp/cli-test"])
+    assert args.cache_dir == "/tmp/cli-test"
+
+
+def test_cli_cache_dir_defaults_to_none() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="dc-video-mcp")
+    parser.add_argument("--cache-dir", help="Override cache directory")
+    args = parser.parse_args([])
+    assert args.cache_dir is None

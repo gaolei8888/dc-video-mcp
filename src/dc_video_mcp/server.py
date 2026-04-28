@@ -280,6 +280,17 @@ async def _run() -> None:
 
 
 def main() -> None:
+    import argparse
+
+    from .config import reconfigure
+
+    parser = argparse.ArgumentParser(prog="dc-video-mcp", description="DC Video MCP server")
+    parser.add_argument("--cache-dir", help="Override cache directory (priority: CLI > env > OS default)")
+    args = parser.parse_args()
+
+    if args.cache_dir:
+        reconfigure(cache_dir=args.cache_dir)
+
     asyncio.run(_run())
 
 

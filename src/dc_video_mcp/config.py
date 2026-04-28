@@ -5,6 +5,7 @@ Heavy imports stay out of this module so MCP startup is fast.
 from __future__ import annotations
 
 import os
+import platform
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -14,7 +15,16 @@ def _env_path(var: str, default: Path) -> Path:
     return Path(raw).expanduser() if raw else default
 
 
-DEFAULT_CACHE = Path.home() / ".cache" / "dc-video-mcp"
+def _default_cache_dir() -> Path:
+    system = platform.system()
+    if system == "Darwin":
+        return Path.home() / "Documents" / "dc-video-mcp"
+    if system == "Windows":
+        return Path.home() / "Documents" / "dc-video-mcp"
+    return Path.home() / "dc-video-mcp"
+
+
+DEFAULT_CACHE = _default_cache_dir()
 
 
 @dataclass(frozen=True)
@@ -59,3 +69,27 @@ class Config:
 
 
 CONFIG = Config.from_env()
+
+
+def reconfigure(*, cache_dir: str | Path | None = None) -> Config:
+    """Rebuild CONFIG with overrides and propagate to all importing modules."""
+    import sys
+
+    if cache_dir is not None:
+        os.environ["DC_VIDEO_MCP_CACHE"] = str(cache_dir)
+
+    new = Config.from_env()
+
+    # Update module-level CONFIG in this module and all importers.
+    global CONFIG  # noqa: PLW0603
+    CONFIG = new
+    this = sys.modules[__name__]
+    for mod in sys.modules.values():
+        if mod is this or mod is None:
+            continue
+        try:
+            if getattr(mod, "CONFIG", None) is not None and mod.__name__.startswith("dc_video_mcp"):
+                mod.CONFIG = new  # type: ignore[attr-defined]
+        except Exception:
+            pass
+    return new
