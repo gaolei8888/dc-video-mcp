@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A local MCP server that turns video files into searchable, summarizable, blog-ready knowledge bases. Keyframe extraction, multi-lingual transcription, semantic search, and one-shot blog generation -- all on your machine, no cloud APIs required.
+A local MCP server that turns video files into searchable, summarizable, blog-ready knowledge bases(RAG). Keyframe extraction, multi-lingual transcription, semantic search, and one-shot blog generation -- all on your machine, no cloud APIs required.
 
 ---
 
