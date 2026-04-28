@@ -122,6 +122,24 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
+### Connect to Claude Code
+
+```bash
+claude mcp add dc-video-mcp -- uv --directory /absolute/path/to/dc-video-mcp run dc-video-mcp
+```
+
+For global (cross-project) scope, add the `-s user` flag:
+
+```bash
+claude mcp add dc-video-mcp -s user -- uv --directory /absolute/path/to/dc-video-mcp run dc-video-mcp
+```
+
+Verify with:
+
+```bash
+claude mcp list
+```
+
 ### Supported video formats
 
 Anything ffmpeg decodes: `.mp4`, `.mov`, `.mkv`, `.webm`, `.avi`, `.m4v`, and more.
