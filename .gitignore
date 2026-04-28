@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual env
+.venv/
+venv/
+
+# Build
+dist/
+build/
+
+# Local data + DB
+data/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Model caches (in case user points HF_HOME locally)
+.cache/
+models/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Env
+.env
+.env.local
