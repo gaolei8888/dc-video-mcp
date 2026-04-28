@@ -69,7 +69,23 @@ This requires a fresh database (embeddings are not cross-compatible between mode
 
 ## Installation
 
-**Requirements:** Python 3.11+ and `ffmpeg` on PATH.
+### Prerequisites
+
+| Dependency | Version | Purpose | Install |
+|---|---|---|---|
+| **Python** | 3.11+ | Runtime | [python.org](https://www.python.org/downloads/) or `brew install python` |
+| **ffmpeg** | any recent | Video decoding & frame extraction | See below |
+| **uv** | latest | Python package manager | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+
+#### Installing ffmpeg
+
+| OS | Command |
+|---|---|
+| macOS | `brew install ffmpeg` |
+| Ubuntu / Debian | `sudo apt install ffmpeg` |
+| Windows | `choco install ffmpeg` or download from [ffmpeg.org](https://ffmpeg.org/download.html) |
+
+Verify: `ffmpeg -version`
 
 ```sh
 git clone https://github.com/gaolei8888/dc-video-mcp.git
